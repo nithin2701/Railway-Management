@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Train</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --success-color: #2ecc71;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        h1 i {
+            margin-right: 15px;
+            font-size: 32px;
+        }
+        
+        .form-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+        
+        .input-icon {
+            position: relative;
+        }
+        
+        .input-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        input[type="datetime-local"] {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--primary-color), #2980b9);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        button:hover {
+            background: linear-gradient(135deg, #2980b9, var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        button i {
+            margin-right: 10px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-train"></i> Update Train Details</h1>
+            <p>Modify the information for this train service</p>
+        </header>
+        
+        <div class="form-container">
+            <form method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="train_number">Train Number</label>
+                        <div class="input-icon">
+                            <i class="fas fa-hashtag"></i>
+                            <input type="text" id="train_number" name="train_number" value="{{ train.train_number }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="train_name">Train Name</label>
+                        <div class="input-icon">
+                            <i class="fas fa-signature"></i>
+                            <input type="text" id="train_name" name="train_name" value="{{ train.train_name }}" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="source">Source Station</label>
+                        <div class="input-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <input type="text" id="source" name="source" value="{{ train.source }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="destination">Destination Station</label>
+                        <div class="input-icon">
+                            <i class="fas fa-map-pin"></i>
+                            <input type="text" id="destination" name="destination" value="{{ train.destination }}" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="departure_time">Departure Time</label>
+                        <div class="input-icon">
+                            <i class="far fa-clock"></i>
+                            <input type="datetime-local" id="departure_time" name="departure_time" value="{{ train.departure_time.strftime('%Y-%m-%dT%H:%M') }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="arrival_time">Arrival Time</label>
+                        <div class="input-icon">
+                            <i class="fas fa-clock"></i>
+                            <input type="datetime-local" id="arrival_time" name="arrival_time" value="{{ train.arrival_time.strftime('%Y-%m-%dT%H:%M') }}" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="seats_available">Seats Available</label>
+                    <div class="input-icon">
+                        <i class="fas fa-chair"></i>
+                        <input type="number" id="seats_available" name="seats_available" value="{{ train.seats_available }}" required>
+                    </div>
+                </div>
+                
+                <button type="submit"><i class="fas fa-sync-alt"></i> Update Train</button>
+            </form>
+            
+            <a href="javascript:history.back()" class="back-link"><i class="fas fa-arrow-left"></i> Back to Train List</a>
+        </div>
+    </div>
+</body>
+</html>

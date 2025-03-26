@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Train | Railway Management System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        :root {
+            --primary: #1a3a8f;
+            --primary-light: #2c4ea0;
+            --secondary: #ff6b35;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --danger: #dc3545;
+            --gray: #6c757d;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        
+        .train-form-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin: 20px auto;
+            position: relative;
+            overflow: hidden;
+            max-width: 1000px;
+        }
+        
+        .train-form-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        
+        .page-title {
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 10px;
+        }
+        
+        .form-group label {
+            font-weight: 500;
+            color: var(--dark);
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            border: 2px solid #e1e5eb;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(26, 58, 143, 0.15);
+            background-color: #fff;
+        }
+        
+        .btn {
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary) 0%, var(--primary-light) 100%);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--primary-light) 0%, var(--primary) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+        }
+        
+        .btn-secondary {
+            background-color: #fff;
+            color: var(--gray);
+            border: 2px solid var(--gray);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--gray);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .form-icon {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .form-section {
+            background-color: #f8fafc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .form-section:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transform: translateY(-3px);
+        }
+        
+        .section-title {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .action-buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        .input-with-icon input {
+            padding-left: 40px;
+        }
+        
+        .train-icon-header {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-right: 15px;
+            animation: train-move 5s infinite linear;
+        }
+        
+        @keyframes train-move {
+            0% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            100% { transform: translateX(-10px); }
+        }
+        
+        .header-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            margin-bottom: 0;
+        }
+        
+        .train-tracks {
+            height: 5px;
+            background: repeating-linear-gradient(90deg, var(--gray) 0px, var(--gray) 10px, transparent 10px, transparent 20px);
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .tooltip-info {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tooltip-info:hover {
+            color: var(--secondary);
+        }
+        
+        /* Custom checkbox styling */
+        .custom-control-input:checked ~ .custom-control-label::before {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="train-form-container">
+            <div class="header-container">
+                <i class="fas fa-train train-icon-header"></i>
+                <h1 class="page-title">Add New Train</h1>
+            </div>
+            
+            <form method="POST">
+                <div class="form-section">
+                    <h3 class="section-title"><i class="fas fa-info-circle form-icon"></i>Basic Information</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="train_number">Train Number</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-hashtag"></i>
+                                    <input type="text" id="train_number" name="train_number" class="form-control" placeholder="e.g., 12345" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="train_name">Train Name</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-signature"></i>
+                                    <input type="text" id="train_name" name="train_name" class="form-control" placeholder="e.g., Rajdhani Express" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 class="section-title"><i class="fas fa-map-marked-alt form-icon"></i>Route Details</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="source">Source Station</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <input type="text" id="source" name="source" class="form-control" placeholder="e.g., Mumbai" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="destination">Destination Station</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-map-pin"></i>
+                                    <input type="text" id="destination" name="destination" class="form-control" placeholder="e.g., Delhi" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="train-tracks"></div>
+                
+                <div class="form-section">
+                    <h3 class="section-title"><i class="far fa-clock form-icon"></i>Schedule Information</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="departure_time">Departure Time</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-hourglass-start"></i>
+                                    <input type="datetime-local" id="departure_time" name="departure_time" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="arrival_time">Arrival Time</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-hourglass-end"></i>
+                                    <input type="datetime-local" id="arrival_time" name="arrival_time" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 class="section-title"><i class="fas fa-ticket-alt form-icon"></i>Ticket Information</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="seats_available">Available Seats</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-chair"></i>
+                                    <input type="number" id="seats_available" name="seats_available" class="form-control" placeholder="e.g., 500" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="ticket_price">Ticket Price (₹)</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-rupee-sign"></i>
+                                    <input type="number" step="0.01" id="ticket_price" name="ticket_price" class="form-control" placeholder="e.g., 1500.00" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus-circle mr-2"></i> Add Train
+                    </button>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript for enhanced interactivity -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Add animation when form sections come into view
+            $('.form-section').addClass('animate__animated animate__fadeIn');
+            
+            // Initialize tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+            
+            // Form validation visual feedback
+            $('.form-control').on('input', function() {
+                if ($(this).val().length > 0) {
+                    $(this).addClass('is-valid');
+                } else {
+                    $(this).removeClass('is-valid');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

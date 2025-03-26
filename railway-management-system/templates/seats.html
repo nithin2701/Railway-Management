@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Available Seats</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-weight: 600;
+      font-size: 1.8rem;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    
+    h1 i, h3 i {
+      color: #3498db;
+      margin-right: 10px;
+    }
+    
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+    }
+    
+    .card-header {
+      border-radius: 10px 10px 0 0 !important;
+      font-weight: 600;
+      background: linear-gradient(135deg, #3498db, #2c3e50) !important;
+      padding: 10px 15px;
+    }
+    
+    .card-header h3 {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+    
+    .card-body {
+      padding: 15px;
+    }
+    
+    .train-info {
+      margin-bottom: 10px;
+    }
+    
+    .train-info h3 {
+      font-size: 1.1rem;
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    
+    .train-info p {
+      margin-bottom: 5px;
+      color: #555;
+      font-size: 0.9rem;
+    }
+    
+    .train-info strong {
+      color: #3498db;
+    }
+    
+    /* Train visualization */
+    .train-visualization {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      position: relative;
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+    
+    .train-engine {
+      width: 100px;
+      height: 60px;
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      border-radius: 10px 0 0 10px;
+      margin-right: 5px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .train-engine::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #2c3e50;
+      border-radius: 50%;
+      bottom: -10px;
+      left: 20px;
+      box-shadow: 40px 0 0 #2c3e50;
+    }
+    
+    .train-coach-selector {
+      width: 80px;
+      height: 50px;
+      background-color: #ecf0f1;
+      border: 2px solid #bdc3c7;
+      border-radius: 5px;
+      margin-right: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #2c3e50;
+      position: relative;
+    }
+    
+    .train-coach-selector:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .train-coach-selector.active {
+      background-color: #3498db;
+      color: white;
+      border-color: #2980b9;
+      box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+    }
+    
+    .train-coach-selector::after {
+      content: "";
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background-color: #bdc3c7;
+      border-radius: 50%;
+      bottom: -8px;
+      left: 15px;
+      box-shadow: 30px 0 0 #bdc3c7;
+    }
+    
+    .train-coach-selector.active::after {
+      background-color: #2980b9;
+      box-shadow: 30px 0 0 #2980b9;
+    }
+    
+    /* Train coach styling */
+    .train-coach {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      position: relative;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      border: 2px solid #3498db;
+      display: none;
+    }
+    
+    .train-coach.active {
+      display: block;
+    }
+    
+    .coach-header {
+      text-align: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px dashed #3498db;
+      position: relative;
+    }
+    
+    .coach-header h4 {
+      color: #2c3e50;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+    
+    .train-door {
+      height: 40px;
+      background: linear-gradient(90deg, #2c3e50, #3498db, #2c3e50);
+      border-radius: 5px;
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    
+    .train-door i {
+      margin-right: 5px;
+    }
+    
+    /* Improved seat layout */
+    .coach-interior {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      border: 1px dashed #bdc3c7;
+      position: relative;
+    }
+    
+    .seat-section {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 25px;
+    }
+    
+    .seat-section:last-child {
+      margin-bottom: 0;
+    }
+    
+    .seat-row {
+      display: flex;
+      width: 100%;
+    }
+    
+    .seat-column {
+      display: flex;
+      flex-direction: column;
+      width: 48%;
+    }
+    
+    .seat-pair {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    
+    .aisle {
+      width: 4%;
+      background: linear-gradient(to bottom, transparent 45%, #bdc3c7 48%, #bdc3c7 52%, transparent 55%);
+      position: relative;
+    }
+    
+    .aisle::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: #bdc3c7;
+    }
+    
+    .aisle i {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #7f8c8d;
+      font-size: 12px;
+    }
+    
+    .seat {
+      width: 48%;
+      height: 45px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      border-radius: 5px;
+      transition: all 0.3s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .seat::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background-color: rgba(0,0,0,0.1);
+    }
+    
+    .seat:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+    
+    .seat-number {
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    .seat-type {
+      font-size: 8px;
+      margin-top: 2px;
+      text-transform: uppercase;
+    }
+    
+    .seat-available {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: white;
+    }
+    
+    .seat-booked {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      color: white;
+      cursor: not-allowed;
+    }
+    
+    .seat-selected {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+    }
+    
+    .section-label {
+      text-align: center;
+      font-weight: 600;
+      color: #7f8c8d;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #ecf0f1;
+      padding-bottom: 5px;
+    }
+    
+    .btn-secondary {
+      background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+      border: none;
+      padding: 8px 15px;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      border: none;
+      padding: 8px 15px;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      border-radius: 5px;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+    
+    .seat-legend {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 15px;
+      background-color: white;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin: 0 10px;
+    }
+    
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      margin-right: 5px;
+    }
+    
+    .legend-color.available {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+    }
+    
+    .legend-color.selected {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+    }
+    
+    .legend-color.booked {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+    }
+    
+    .legend-item span {
+      font-weight: 500;
+      color: #555;
+      font-size: 0.85rem;
+    }
+    
+    .form-group label {
+      font-weight: 500;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+    
+    .passenger-count {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.8rem;
+      border: 1px solid white;
+    }
+    
+    /* Coach availability indicator */
+    .coach-availability {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .availability-high {
+      background-color: #2ecc71;
+    }
+    
+    .availability-medium {
+      background-color: #f39c12;
+    }
+    
+    .availability-low {
+      background-color: #e74c3c;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .seat {
+        height: 40px;
+      }
+      
+      .seat-number {
+        font-size: 12px;
+      }
+      
+      .seat-type {
+        font-size: 7px;
+      }
+      
+      .train-coach-selector {
+        width: 70px;
+        height: 45px;
+        font-size: 0.8rem;
+      }
+      
+      .train-engine {
+        width: 80px;
+        height: 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+    
+    <div class="container mt-3">
+        <h1 align="center"><i class="fas fa-train"></i> Seats: {{ train.train_name }}</h1>
+
+        <div class="seat-legend">
+            <div class="legend-item">
+                <div class="legend-color available"></div>
+                <span>Available</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color selected"></div>
+                <span>Selected</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color booked"></div>
+                <span>Booked</span>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body p-2">
+                <div class="row train-info">
+                    <div class="col-md-4">
+                        <h3><i class="fas fa-train"></i> Train Details</h3>
+                        <p><strong>Number:</strong> {{ train.train_number }}</p>
+                        <p><strong>Departure:</strong> {{ train.departure_time }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h3><i class="fas fa-route"></i> Route</h3>
+                        <p><strong>From:</strong> {{ train.source }}</p>
+                        <p><strong>To:</strong> {{ train.destination }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h3><i class="fas fa-info-circle"></i> Seats</h3>
+                        <p><strong>Total:</strong> {{ total_seats }}</p>
+                        <p><strong>Available:</strong> {{ total_seats - booked_seats|length }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coach Selection -->
+        <div class="card mb-3">
+            <div class="card-header bg-primary text-white">
+                <h3><i class="fas fa-subway"></i> Select Coach</h3>
+            </div>
+            <div class="card-body">
+                <div class="train-visualization">
+                    <div class="train-engine">
+                        <i class="fas fa-train"></i>
+                    </div>
+                    
+                    {% set seats_per_coach = 20 %}
+                    {% set num_coaches = (total_seats / seats_per_coach)|round(0, 'ceil')|int %}
+                    
+                    {% for coach_num in range(1, num_coaches + 1) %}
+                        {% set coach_start = (coach_num - 1) * seats_per_coach + 1 %}
+                        {% set coach_end = coach_num * seats_per_coach %}
+                        {% if coach_end > total_seats %}
+                            {% set coach_end = total_seats %}
+                        {% endif %}
+                        
+                        {% set booked_in_coach = 0 %}
+                        {% for seat in range(coach_start, coach_end + 1) %}
+                            {% if seat in booked_seats %}
+                                {% set booked_in_coach = booked_in_coach + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% set available_in_coach = coach_end - coach_start + 1 - booked_in_coach %}
+                        {% set availability_class = 'availability-high' %}
+                        {% if available_in_coach < (coach_end - coach_start + 1) * 0.3 %}
+                            {% set availability_class = 'availability-low' %}
+                        {% elif available_in_coach < (coach_end - coach_start + 1) * 0.7 %}
+                            {% set availability_class = 'availability-medium' %}
+                        {% endif %}
+                        
+                        <div id="coach-selector-{{ coach_num }}" 
+                             class="train-coach-selector {% if coach_num == 1 %}active{% endif %}"
+                             onclick="selectCoach({{ coach_num }})">
+                            A{{ coach_num }}
+                            <div class="coach-availability {{ availability_class }}">
+                                {{ available_in_coach }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Seat Map -->
+        <div class="card mb-3">
+            <div class="card-header bg-primary text-white">
+                <h3><i class="fas fa-couch"></i> Select Your Seats</h3>
+            </div>
+            <div class="card-body">
+                {% set seats_per_coach = 20 %}
+                {% set num_coaches = (total_seats / seats_per_coach)|round(0, 'ceil')|int %}
+                
+                {% for coach_num in range(1, num_coaches + 1) %}
+                    {% set coach_start = (coach_num - 1) * seats_per_coach + 1 %}
+                    {% set coach_end = coach_num * seats_per_coach %}
+                    {% if coach_end > total_seats %}
+                        {% set coach_end = total_seats %}
+                    {% endif %}
+                    
+                    <div id="coach-{{ coach_num }}" class="train-coach {% if coach_num == 1 %}active{% endif %}">
+                        <div class="coach-header">
+                            <h4><i class="fas fa-subway"></i> Coach A{{ coach_num }}</h4>
+                            <div class="passenger-count" id="selected-count-{{ coach_num }}">0</div>
+                        </div>
+                        
+                        
+                        <div class="coach-interior">
+                            <!-- Upper Section (Seats 1-10) -->
+                            <div class="seat-section">
+                                <div class="section-label">SECTION 1</div>
+                                
+                                <div class="seat-row">
+                                    <div class="seat-column">
+                                        <!-- Left side, upper section -->
+                                        <div class="seat-pair">
+                                            {% set seat_num = coach_start %}
+                                            <div id="seat-{{ seat_num }}" 
+                                                 class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                 onclick="selectSeat({{ seat_num }})"
+                                                 title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                                <div class="seat-number">{{ seat_num }}</div>
+                                                <div class="seat-type">Window</div>
+                                            </div>
+                                            
+                                            {% set seat_num = coach_start + 1 %}
+                                            <div id="seat-{{ seat_num }}" 
+                                                 class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                 onclick="selectSeat({{ seat_num }})"
+                                                 title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                                <div class="seat-number">{{ seat_num }}</div>
+                                                <div class="seat-type">Aisle</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="seat-pair">
+                                            {% set seat_num = coach_start + 4 %}
+                                            <div id="seat-{{ seat_num }}" 
+                                                 class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                 onclick="selectSeat({{ seat_num }})"
+                                                 title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                                <div class="seat-number">{{ seat_num }}</div>
+                                                <div class="seat-type">Window</div>
+                                            </div>
+                                            
+                                            {% set seat_num = coach_start + 5 %}
+                                            <div id="seat-{{ seat_num }}" 
+                                                 class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                 onclick="selectSeat({{ seat_num }})"
+                                                 title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                                <div class="seat-number">{{ seat_num }}</div>
+                                                <div class="seat-type">Aisle</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="seat-pair">
+                                            {% set seat_num = coach_start + 8 %}
+                                            <div id="seat-{{ seat_num }}" 
+                                                 class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                 onclick="selectSeat({{ seat_num }})"
+                                                 title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                                <div class="seat-number">{{ seat_num }}</div>
+                                                <div class="seat-type">Window</div>
+                                            </div>
+                                            
+                                            {% set seat_num = coach_start + 9 %}
+                                            <div id="seat-{{ seat_num }}" 
+                                                 class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                 onclick="selectSeat({{ seat_num }})"
+                                                 title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                                <div class="seat-number">{{ seat_num }}</div>
+                                                <div class="seat-type">Aisle</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="aisle">
+                                        <i class="fas fa-walking"></i>
+                                    </div>
+                                    
+                                    <div class="seat-column">
+                                        <!-- Right side, upper section -->
+                                        <div class="seat-pair">
+                                            {% set seat_num = coach_start + 2 %}
+                                            <div id="seat-{{ seat_num }}" 
+                                                 class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                 onclick="selectSeat({{ seat_num }})"
+                                                 title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                                <div class="seat-number">{{ seat_num }}</div>
+                                                <div class="seat-type">Aisle</div>
+                                            </div>
+                                            
+                                            {% set seat_num = coach_start + 3 %}
+                                            <div id="seat-{{ seat_num }}" 
+                                                 class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                 onclick="selectSeat({{ seat_num }})"
+                                                 title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                                <div class="seat-number">{{ seat_num }}</div>
+                                                <div class="seat-type">Window</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="seat-pair">
+                                            {% set seat_num = coach_start + 6 %}
+                                            <div id="seat-{{ seat_num }}" 
+                                                 class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                 onclick="selectSeat({{ seat_num }})"
+                                                 title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                                <div class="seat-number">{{ seat_num }}</div>
+                                                <div class="seat-type">Aisle</div>
+                                            </div>
+                                            
+                                            {% set seat_num = coach_start + 7 %}
+                                            <div id="seat-{{ seat_num }}" 
+                                                 class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                 onclick="selectSeat({{ seat_num }})"
+                                                 title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                                <div class="seat-number">{{ seat_num }}</div>
+                                                <div class="seat-type">Window</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="seat-pair">
+                                            {% set seat_num = coach_start + 10 %}
+                                            <div id="seat-{{ seat_num }}" 
+                                                 class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                 onclick="selectSeat({{ seat_num }})"
+                                                 title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                                <div class="seat-number">{{ seat_num }}</div>
+                                                <div class="seat-type">Aisle</div>
+                                            </div>
+                                            
+                                            {% set seat_num = coach_start + 11 %}
+                                            {% if seat_num <= coach_end %}
+                                                <div id="seat-{{ seat_num }}" 
+                                                     class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                     onclick="selectSeat({{ seat_num }})"
+                                                     title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                                    <div class="seat-number">{{ seat_num }}</div>
+                                                    <div class="seat-type">Window</div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Lower Section (Seats 11-20) -->
+                            <div class="seat-section">
+                                <div class="section-label">SECTION 2</div>
+                                
+                                <div class="seat-row">
+                                    <div class="seat-column">
+                                        <!-- Left side, lower section -->
+                                        <div class="seat-pair">
+                                            {% set seat_num = coach_start + 12 %}
+                                            {% if seat_num <= coach_end %}
+                                                <div id="seat-{{ seat_num }}" 
+                                                     class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                     onclick="selectSeat({{ seat_num }})"
+                                                     title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                                    <div class="seat-number">{{ seat_num }}</div>
+                                                    <div class="seat-type">Window</div>
+                                                </div>
+                                            {% endif %}
+                                            
+                                            {% set seat_num = coach_start + 13 %}
+                                            {% if seat_num <= coach_end %}
+                                                <div id="seat-{{ seat_num }}" 
+                                                class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                onclick="selectSeat({{ seat_num }})"
+                                                title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                               <div class="seat-number">{{ seat_num }}</div>
+                                               <div class="seat-type">Aisle</div>
+                                           </div>
+                                       {% endif %}
+                                   </div>
+                                   
+                                   <div class="seat-pair">
+                                       {% set seat_num = coach_start + 14 %}
+                                       {% if seat_num <= coach_end %}
+                                           <div id="seat-{{ seat_num }}" 
+                                                class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                onclick="selectSeat({{ seat_num }})"
+                                                title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                               <div class="seat-number">{{ seat_num }}</div>
+                                               <div class="seat-type">Window</div>
+                                           </div>
+                                       {% endif %}
+                                       
+                                       {% set seat_num = coach_start + 15 %}
+                                       {% if seat_num <= coach_end %}
+                                           <div id="seat-{{ seat_num }}" 
+                                                class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                onclick="selectSeat({{ seat_num }})"
+                                                title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                               <div class="seat-number">{{ seat_num }}</div>
+                                               <div class="seat-type">Aisle</div>
+                                           </div>
+                                       {% endif %}
+                                   </div>
+                               </div>
+                               
+                               <div class="aisle">
+                                   <i class="fas fa-walking"></i>
+                               </div>
+                               
+                               <div class="seat-column">
+                                   <!-- Right side, lower section -->
+                                   <div class="seat-pair">
+                                       {% set seat_num = coach_start + 16 %}
+                                       {% if seat_num <= coach_end %}
+                                           <div id="seat-{{ seat_num }}" 
+                                                class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                onclick="selectSeat({{ seat_num }})"
+                                                title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                               <div class="seat-number">{{ seat_num }}</div>
+                                               <div class="seat-type">Aisle</div>
+                                           </div>
+                                       {% endif %}
+                                       
+                                       {% set seat_num = coach_start + 17 %}
+                                       {% if seat_num <= coach_end %}
+                                           <div id="seat-{{ seat_num }}" 
+                                                class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                onclick="selectSeat({{ seat_num }})"
+                                                title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                               <div class="seat-number">{{ seat_num }}</div>
+                                               <div class="seat-type">Window</div>
+                                           </div>
+                                       {% endif %}
+                                   </div>
+                                   
+                                   <div class="seat-pair">
+                                       {% set seat_num = coach_start + 18 %}
+                                       {% if seat_num <= coach_end %}
+                                           <div id="seat-{{ seat_num }}" 
+                                                class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                onclick="selectSeat({{ seat_num }})"
+                                                title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                               <div class="seat-number">{{ seat_num }}</div>
+                                               <div class="seat-type">Aisle</div>
+                                           </div>
+                                       {% endif %}
+                                       
+                                       {% set seat_num = coach_start + 19 %}
+                                       {% if seat_num <= coach_end %}
+                                           <div id="seat-{{ seat_num }}" 
+                                                class="seat {% if seat_num in booked_seats %}seat-booked{% else %}seat-available{% endif %}"
+                                                onclick="selectSeat({{ seat_num }})"
+                                                title="{% if seat_num in booked_seats %}Booked{% else %}Available{% endif %}">
+                                               <div class="seat-number">{{ seat_num }}</div>
+                                               <div class="seat-type">Window</div>
+                                           </div>
+                                       {% endif %}
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           {% endfor %}
+       </div>
+   </div>
+   
+   <!-- Booking Form -->
+   <div class="card" id="booking-form" style="display: none;">
+       <div class="card-header bg-primary text-white">
+           <h3><i class="fas fa-user"></i> Passenger Details</h3>
+       </div>
+       <div class="card-body">
+           <div id="feedback" class="alert d-none"></div>
+           <form method="POST" action="{{ url_for('book_ticket', train_id=train.id) }}">
+               <div id="passenger-details-container">
+                   <!-- Passenger details will be dynamically added here -->
+               </div>
+               <input type="hidden" id="selected_seats" name="selected_seats">
+               <button type="submit" class="btn btn-primary btn-block">
+                   <i class="fas fa-ticket-alt"></i> Confirm Booking
+               </button>
+           </form>
+       </div>
+   </div>
+   
+   <a href="{{ url_for('index') }}" class="btn btn-secondary mt-2 mb-3">
+       <i class="fas fa-arrow-left"></i> Back to Trains
+   </a>
+   <footer class="footer">
+    <p>© 2025 Railway Management System</p>
+    <p style="margin-top: 5px; font-size: 0.8rem;">Designed with <i class="fas fa-heart" style="color: #ff006e;"></i> by Nithin B L</p>
+</footer>
+</div>
+
+<script>
+   let selectedSeats = new Set();
+   
+   function selectCoach(coachNum) {
+       // Hide all coaches
+       const coaches = document.querySelectorAll('.train-coach');
+       coaches.forEach(coach => {
+           coach.classList.remove('active');
+       });
+       
+       // Deactivate all coach selectors
+       const coachSelectors = document.querySelectorAll('.train-coach-selector');
+       coachSelectors.forEach(selector => {
+           selector.classList.remove('active');
+       });
+       
+       // Show selected coach
+       document.getElementById('coach-' + coachNum).classList.add('active');
+       document.getElementById('coach-selector-' + coachNum).classList.add('active');
+   }
+   
+   function selectSeat(seatNumber) {
+       const seat = document.getElementById('seat-' + seatNumber);
+       
+       // Don't allow selection of booked seats
+       if (seat.classList.contains('seat-booked')) return;
+       
+       if (selectedSeats.has(seatNumber)) {
+           seat.classList.remove('seat-selected');
+           seat.classList.add('seat-available');
+           selectedSeats.delete(seatNumber);
+       } else {
+           seat.classList.remove('seat-available');
+           seat.classList.add('seat-selected');
+           selectedSeats.add(seatNumber);
+       }
+       
+       // Update all selected count badges
+       const selectedCountElements = document.querySelectorAll('[id^="selected-count-"]');
+       selectedCountElements.forEach(element => {
+           element.textContent = selectedSeats.size;
+       });
+       
+       document.getElementById('selected_seats').value = Array.from(selectedSeats).join(',');
+       
+       // Toggle form visibility
+       const bookingForm = document.getElementById('booking-form');
+       const passengerDetailsContainer = document.getElementById('passenger-details-container');
+       passengerDetailsContainer.innerHTML = ''; // Clear previous passenger inputs
+
+// Replace the existing passenger form generation code in the selectSeat function with this:
+if (selectedSeats.size > 0) {
+    bookingForm.style.display = 'block';
+
+    // Add passenger input fields for each selected seat
+    Array.from(selectedSeats).forEach((seatNumber, index) => {
+        const passengerForm = `
+            <div class="passenger-form card mb-3">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-user-circle"></i> Passenger ${index + 1} (Seat ${seatNumber})</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" name="passenger_name_${seatNumber}" class="form-control" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label><i class="fas fa-birthday-cake"></i> Age</label>
+                                <input type="number" name="passenger_age_${seatNumber}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label><i class="fas fa-venus-mars"></i> Gender</label>
+                                <select name="passenger_gender_${seatNumber}" class="form-control" required>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> Contact Number</label>
+                        <input type="tel" name="passenger_contact_${seatNumber}" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+        `;
+        passengerDetailsContainer.insertAdjacentHTML('beforeend', passengerForm);
+    });
+} else {
+    bookingForm.style.display = 'none';
+}
+
+   }
+</script>
+</body>
+</html>
+
+
